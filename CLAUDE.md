@@ -52,11 +52,28 @@ inline it. This is what lets the creator restyle every video at once.
 
 **Always use `pnpm`.** Never `npm`/`npx`/`yarn`.
 
-## Don't run the dev server yourself
+## Running servers
 
-Do **not** run `pnpm dev` / `remotion studio` (long-running). The creator runs
-it and tells you what they see. To verify your work, use `pnpm typecheck`,
-`pnpm lint`, or render a still/short clip with `remotion still` / `remotion render`.
+By default, don't start long-running dev servers on your own — to verify your
+own work, use `pnpm typecheck`, `pnpm lint`, or render a still/short clip with
+`remotion still` / `remotion render`.
+
+**Exception — when the creator explicitly asks to "run the dashboard" (or "run
+it" / "start the app"), start BOTH servers**, each in its own background process:
+
+1. **Remotion Studio** — from the project root:
+   ```bash
+   pnpm dev            # → http://localhost:3000  (preview & edit compositions)
+   ```
+2. **The Video OS dashboard** — from `dashboard/`:
+   ```bash
+   cd dashboard && pnpm dev    # → http://localhost:4030  (watch/render/export)
+   ```
+
+Run them in the background (don't block on them), then report both URLs. They
+work together: Studio is for live editing the compositions; the dashboard watches
+the project to render, export, and manage assets. If only one is asked for, still
+prefer starting both unless the creator says otherwise.
 
 ## Common commands
 
