@@ -42,6 +42,9 @@ models
 /public/files/*
 /public/casts/*
 !/public/**/.gitkeep
+# template sample assets referenced by the component-library demos
+!/public/videos/robot_nature.mp4
+!/public/images/sample-screenshot.png
 
 # transcription artifacts produced by /transcribe
 *.captions.json
