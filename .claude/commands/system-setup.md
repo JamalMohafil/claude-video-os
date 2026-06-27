@@ -113,10 +113,10 @@ default does).
 
 - If `.env` doesn't exist, `cp .env.example .env`.
 - Ask which optional integrations they want now (ElevenLabs voiceover,
-  Replicate images, Deepgram captions). For each chosen one, ask for the key and
-  write it into `.env`. NEVER print keys back or commit `.env`.
-- If they want local, offline captions instead of Deepgram, tell them captions
-  can run via local Whisper later — don't block setup on it.
+  Replicate images). For each chosen one, ask for the key and write it into
+  `.env`. NEVER print keys back or commit `.env`.
+- Captions are always **local and offline** via Whisper (`/transcribe`) — no
+  API key, no cloud service. Nothing to set up here for captions.
 
 ### 7. Verify the brand
 

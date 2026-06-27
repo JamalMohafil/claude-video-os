@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ahmed — Web Developer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap');
+
+    :root {
+      --bg: #fbf8ff;
+      --surface: #ffffff;
+      --surface-soft: #f3ecff;
+      --ink: #201630;
+      --muted: #746486;
+      --muted-2: #9b8aaa;
+      --line: rgba(124, 58, 237, 0.14);
+      --purple: #7c3aed;
+      --purple-2: #a855f7;
+      --purple-3: #ede9fe;
+      --shadow: 0 24px 80px rgba(69, 38, 120, 0.13);
+      --radius: 28px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 5%, rgba(168, 85, 247, 0.18), transparent 32rem),
+        radial-gradient(circle at 90% 0%, rgba(124, 58, 237, 0.14), transparent 28rem),
+        linear-gradient(180deg, #fff 0%, var(--bg) 34%, #fff 100%);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::selection { background: var(--purple); color: #fff; }
+
+    a { color: inherit; }
+    section { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 92px 0; }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image: linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(124, 58, 237, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, #000, transparent 78%);
+    }
+
+    nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: min(1120px, calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 12px 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 48px rgba(64, 35, 110, 0.08);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.98rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .logo-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      color: #fff;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      box-shadow: 0 10px 24px rgba(124, 58, 237, 0.28);
+    }
+
+    nav ul { display: flex; gap: 6px; list-style: none; }
+    nav a {
+      display: inline-flex;
+      padding: 9px 14px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 999px;
+      transition: color 0.2s, background 0.2s;
+    }
+    nav a:hover { color: var(--purple); background: var(--purple-3); }
+
+    .nav-cta {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(32, 22, 48, 0.14);
+    }
+    nav .nav-cta:hover { background: var(--purple); color: #fff; }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      color: var(--purple);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section-kicker::before {
+      content: "";
+      width: 26px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 999px;
+    }
+
+    .section-title {
+      max-width: 780px;
+      font-size: clamp(2.1rem, 5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 0.98;
+      letter-spacing: -0.07em;
+    }
+
+    .section-copy {
+      max-width: 650px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 22px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-weight: 850;
+      text-decoration: none;
+      transition: transform 0.22s, box-shadow 0.22s, background 0.22s, border-color 0.22s;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      box-shadow: 0 18px 38px rgba(124, 58, 237, 0.26);
+    }
+
+    .btn-secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.68);
+      border-color: var(--line);
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 56px;
+      align-items: center;
+      padding-top: 138px;
+    }
+
+    .availability {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding: 9px 14px;
+      color: #4c287c;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      box-shadow: 0 12px 36px rgba(64, 35, 110, 0.08);
+    }
+
+    .availability-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.14);
+    }
+
+    .hero h1 {
+      max-width: 680px;
+      font-size: clamp(3.4rem, 8.8vw, 7.4rem);
+      font-weight: 900;
+      line-height: 0.88;
+      letter-spacing: -0.09em;
+    }
+
+    .hero h1 span {
+      display: block;
+      color: transparent;
+      background: linear-gradient(120deg, var(--purple), #c084fc 48%, #4c1d95);
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+
+    .hero-copy {
+      max-width: 585px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 1.17rem;
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 42px;
+      max-width: 600px;
+    }
+
+    .metric {
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 16px 40px rgba(64, 35, 110, 0.07);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.55rem;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .metric span { color: var(--muted); font-size: 0.86rem; font-weight: 700; }
+
+    .hero-card {
+      position: relative;
+      min-height: 600px;
+      padding: 22px;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(243,236,255,0.82));
+      border: 1px solid var(--line);
+      border-radius: 38px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      border-radius: 28px;
+      background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.28), transparent 42%), #1f1431;
+    }
+
+    .browser {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 24px;
+      background: #fff;
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 32px 80px rgba(21, 12, 36, 0.35);
+    }
+
+    .browser-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px;
+      background: #f7f2ff;
+      border-bottom: 1px solid #eadcff;
+    }
+
+    .browser-dot { width: 10px; height: 10px; border-radius: 50%; background: #d8c6ef; }
+    .browser-body { padding: 22px; }
+
+    .mock-hero {
+      min-height: 210px;
+      padding: 24px;
+      border-radius: 22px;
+      color: #fff;
+      background: linear-gradient(135deg, #6d28d9, #a855f7);
+    }
+
+    .mock-line { height: 12px; border-radius: 999px; background: rgba(255,255,255,0.26); }
+    .mock-line.big { width: 72%; height: 28px; margin: 58px 0 12px; background: rgba(255,255,255,0.85); }
+    .mock-line.mid { width: 54%; }
+
+    .floating-card {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 64px;
+      width: 250px;
+      padding: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 22px 58px rgba(41, 23, 73, 0.22);
+    }
+
+    .floating-card strong { display: block; margin-bottom: 8px; font-size: 0.92rem; }
+    .progress { height: 10px; overflow: hidden; border-radius: 999px; background: #eee4ff; }
+    .progress span { display: block; width: 86%; height: 100%; background: linear-gradient(90deg, var(--purple), var(--purple-2)); }
+
+    .stack-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .stack-strip span {
+      padding: 8px 11px;
+      color: #5d338f;
+      background: #f2eaff;
+      border: 1px solid #e2d1ff;
+      border-radius: 999px;
+      font-size: 0.79rem;
+      font-weight: 850;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 36px;
+      align-items: stretch;
+      margin-top: 34px;
+    }
+
+    .portrait-card, .copy-card, .service-card, .project-card, .testimonial-card, .contact-panel {
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 60px rgba(64, 35, 110, 0.08);
+    }
+
+    .portrait-card {
+      display: grid;
+      place-items: center;
+      min-height: 430px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(192, 132, 252, 0.5), transparent 30%),
+        linear-gradient(135deg, #f5edff, #ffffff);
+    }
+
+    .portrait-initial {
+      display: grid;
+      place-items: center;
+      width: min(64%, 260px);
+      aspect-ratio: 1;
+      color: #fff;
+      border-radius: 42px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      font-size: clamp(5rem, 12vw, 9rem);
+      font-weight: 900;
+      letter-spacing: -0.12em;
+      box-shadow: 0 28px 80px rgba(124, 58, 237, 0.32);
+    }
+
+    .copy-card { padding: 38px; }
+    .copy-card p { margin-top: 16px; color: var(--muted); font-size: 1.04rem; }
+
+    .highlight-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+      list-style: none;
+    }
+
+    .highlight-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #45325c;
+      font-weight: 750;
+    }
+
+    .check {
+      display: grid;
+      place-items: center;
+      flex: 0 0 26px;
+      width: 26px;
+      height: 26px;
+      color: #fff;
+      border-radius: 50%;
+      background: var(--purple);
+      font-size: 0.85rem;
+      font-weight: 900;
+    }
+
+    .services-grid, .projects-grid, .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .service-card { padding: 28px; }
+    .service-card .number {
+      color: var(--purple);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .service-card h3, .project-card h3 { margin-top: 18px; font-size: 1.28rem; line-height: 1.12; letter-spacing: -0.04em; }
+    .service-card p, .project-card p, .testimonial-card p { margin-top: 12px; color: var(--muted); font-size: 0.96rem; }
+
+    .skills-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+      padding: 28px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(255,255,255,0.72));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .skills-cloud span {
+      padding: 12px 16px;
+      color: #4c287c;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: 0 10px 28px rgba(64, 35, 110, 0.06);
+      font-weight: 850;
+    }
+
+    .project-card { overflow: hidden; }
+    .project-preview {
+      min-height: 190px;
+      padding: 18px;
+      background: linear-gradient(135deg, #30164d, #7c3aed);
+    }
+
+    .project-preview.light { background: linear-gradient(135deg, #fff, #e9d5ff); }
+    .project-window {
+      height: 154px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 20px 44px rgba(38, 16, 67, 0.18);
+      padding: 16px;
+    }
+
+    .project-window.dark { background: rgba(32, 22, 48, 0.72); }
+    .project-content { padding: 24px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .tags span { padding: 7px 10px; color: #5d338f; background: #f3ecff; border-radius: 999px; font-size: 0.78rem; font-weight: 850; }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .process-step {
+      padding: 24px;
+      background: #201630;
+      color: #fff;
+      border-radius: 24px;
+      box-shadow: 0 18px 50px rgba(32, 22, 48, 0.16);
+    }
+
+    .process-step:nth-child(even) { background: var(--purple); }
+    .process-step span { color: rgba(255,255,255,0.62); font-size: 0.82rem; font-weight: 900; letter-spacing: 0.12em; }
+    .process-step h3 { margin-top: 28px; font-size: 1.1rem; letter-spacing: -0.04em; }
+
+    .testimonial-card { padding: 28px; }
+    .quote-mark { color: var(--purple); font-size: 3rem; line-height: 0.7; font-weight: 900; }
+    .author { margin-top: 20px; font-weight: 900; }
+    .role { color: var(--muted-2); font-size: 0.88rem; font-weight: 700; }
+
+    .contact-panel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      padding: 42px;
+      background:
+        radial-gradient(circle at 90% 20%, rgba(168, 85, 247, 0.28), transparent 28rem),
+        linear-gradient(135deg, #fff, #f5edff);
+    }
+
+    .email {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--purple);
+      font-size: clamp(1.35rem, 4vw, 2.25rem);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      text-decoration: none;
+    }
+
+    .socials { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .socials a {
+      padding: 10px 14px;
+      color: #4c287c;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 850;
+    }
+
+    footer {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+      color: var(--muted-2);
+      font-size: 0.9rem;
+      font-weight: 650;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 920px) {
+      nav ul li:nth-child(3), nav ul li:nth-child(4) { display: none; }
+      .hero, .about-grid, .contact-panel { grid-template-columns: 1fr; }
+      .hero-card { min-height: 520px; }
+      .services-grid, .projects-grid, .testimonials-grid { grid-template-columns: 1fr 1fr; }
+      .process { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      section { width: min(100% - 28px, 1120px); padding: 70px 0; }
+      nav { top: 10px; width: calc(100% - 20px); }
+      nav ul { display: none; }
+      .nav-cta { padding-inline: 12px; }
+      .hero { padding-top: 118px; }
+      .hero h1 { font-size: clamp(3.3rem, 18vw, 4.8rem); }
+      .hero-metrics, .services-grid, .projects-grid, .testimonials-grid, .process { grid-template-columns: 1fr; }
+      .hero-card { min-height: 430px; padding: 14px; border-radius: 28px; }
+      .hero-card::before { inset: 14px; border-radius: 22px; }
+      .floating-card { right: 18px; bottom: 30px; width: 210px; }
+      .copy-card, .contact-panel { padding: 28px; }
+      .section-title { letter-spacing: -0.06em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <nav>
+    <div class="logo"><span class="logo-mark">A</span> Ahmed.dev</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#projects">Work</a></li>
+      <li><a href="#process">Process</a></li>
+    </ul>
+    <a class="nav-cta" href="#contact">Hire Ahmed</a>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <div class="availability"><span class="availability-dot"></span> Available for freelance projects</div>
+      <h1>Ahmed builds <span>websites that sell.</span></h1>
+      <p class="hero-copy">A web developer focused on polished interfaces, fast performance, and clean full-stack implementation for startups, creators, and growing businesses.</p>
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">See selected work</a>
+        <a href="mailto:ahmed@example.com" class="btn btn-secondary">Start a project</a>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric"><strong>30+</strong><span>projects shipped</span></div>
+        <div class="metric"><strong>96</strong><span>avg. Lighthouse score</span></div>
+        <div class="metric"><strong>5 yrs</strong><span>building for web</span></div>
+      </div>
+    </div>
+
+    <div class="hero-card" aria-label="Portfolio website mockup">
+      <div class="browser">
+        <div class="browser-top"><span class="browser-dot"></span><span class="browser-dot"></span><span class="browser-dot"></span></div>
+        <div class="browser-body">
+          <div class="mock-hero">
+            <div class="mock-line" style="width: 34%"></div>
+            <div class="mock-line big"></div>
+            <div class="mock-line mid"></div>
+          </div>
+          <div class="stack-strip">
+            <span>React</span><span>Next.js</span><span>TypeScript</span><span>Node</span><span>SEO</span>
+          </div>
+        </div>
+      </div>
+      <div class="floating-card">
+        <strong>Performance ready</strong>
+        <div class="progress"><span></span></div>
+        <p style="margin-top: 10px; color: var(--muted); font-size: 0.84rem; font-weight: 700;">Clean code, responsive layout, optimized delivery.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <span class="section-kicker">About</span>
+    <h2 class="section-title">A developer who cares about both design and the details.</h2>
+    <div class="about-grid">
+      <div class="portrait-card"><div class="portrait-initial">A</div></div>
+      <div class="copy-card">
+        <p>Ahmed turns rough ideas into professional web experiences with clear structure, sharp visuals, and reliable implementation.</p>
+        <p>He works across frontend and backend, which means your landing page, dashboard, portfolio, or product site can move from concept to launch without losing quality between design and code.</p>
+        <ul class="highlight-list">
+          <li><span class="check">✓</span> Responsive layouts that feel intentional on every screen</li>
+          <li><span class="check">✓</span> Fast pages built with performance and SEO in mind</li>
+          <li><span class="check">✓</span> Clean, maintainable code that is easy to grow</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <span class="section-kicker">Services</span>
+    <h2 class="section-title">From landing pages to full-stack web apps.</h2>
+    <p class="section-copy">Ahmed helps businesses launch sharper websites, improve existing products, and build custom web tools that are fast, stable, and easy to use.</p>
+    <div class="services-grid">
+      <article class="service-card">
+        <span class="number">01</span>
+        <h3>Landing Pages</h3>
+        <p>High-converting pages with strong messaging, responsive sections, and premium visual polish.</p>
+      </article>
+      <article class="service-card">
+        <span class="number">02</span>
+        <h3>Web Applications</h3>
+        <p>Interactive dashboards, portals, and product interfaces built with modern frontend tools.</p>
+      </article>
+      <article class="service-card">
+        <span class="number">03</span>
+        <h3>Frontend Cleanup</h3>
+        <p>Refactors, performance improvements, design fixes, and UI polish for existing websites.</p>
+      </article>
+    </div>
+
+    <div class="skills-cloud" aria-label="Ahmed's technical skills">
+      <span>HTML</span><span>CSS</span><span>JavaScript</span><span>TypeScript</span><span>React</span><span>Next.js</span><span>Node.js</span><span>Tailwind</span><span>PostgreSQL</span><span>MongoDB</span><span>REST APIs</span><span>Git</span>
+    </div>
+  </section>
+
+  <section id="projects">
+    <span class="section-kicker">Selected Work</span>
+    <h2 class="section-title">Projects designed to look good and work hard.</h2>
+    <div class="projects-grid">
+      <article class="project-card">
+        <div class="project-preview"><div class="project-window dark"></div></div>
+        <div class="project-content">
+          <h3>Storefront Pro</h3>
+          <p>A modern e-commerce experience with product filtering, checkout, and admin workflows.</p>
+          <div class="tags"><span>Next.js</span><span>Stripe</span><span>PostgreSQL</span></div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-preview light"><div class="project-window"></div></div>
+        <div class="project-content">
+          <h3>TaskFlow</h3>
+          <p>A clean project management app with boards, collaboration views, and responsive UI.</p>
+          <div class="tags"><span>React</span><span>TypeScript</span><span>Firebase</span></div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-preview"><div class="project-window dark"></div></div>
+        <div class="project-content">
+          <h3>Founder Site</h3>
+          <p>A polished personal brand website with strong sections, fast loading, and clear CTAs.</p>
+          <div class="tags"><span>HTML</span><span>CSS</span><span>SEO</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="process">
+    <span class="section-kicker">Process</span>
+    <h2 class="section-title">A simple process that keeps projects moving.</h2>
+    <div class="process">
+      <div class="process-step"><span>STEP 01</span><h3>Clarify the goal</h3></div>
+      <div class="process-step"><span>STEP 02</span><h3>Shape the layout</h3></div>
+      <div class="process-step"><span>STEP 03</span><h3>Build the site</h3></div>
+      <div class="process-step"><span>STEP 04</span><h3>Polish and launch</h3></div>
+    </div>
+  </section>
+
+  <section id="testimonials">
+    <span class="section-kicker">Testimonials</span>
+    <h2 class="section-title">Clients value the mix of speed, taste, and technical quality.</h2>
+    <div class="testimonials-grid">
+      <article class="testimonial-card">
+        <div class="quote-mark">“</div>
+        <p>Ahmed made our website feel premium without making it complicated. The final page was fast, clean, and easy to update.</p>
+        <div class="author">Sarah Johnson</div>
+        <div class="role">Founder, Studio North</div>
+      </article>
+      <article class="testimonial-card">
+        <div class="quote-mark">“</div>
+        <p>He thinks like a product person, not just a coder. Every section had a purpose and the build quality was excellent.</p>
+        <div class="author">Mohamed Al-Rashid</div>
+        <div class="role">Product Lead, StartupHub</div>
+      </article>
+      <article class="testimonial-card">
+        <div class="quote-mark">“</div>
+        <p>Our old site was slow and generic. Ahmed rebuilt it into something sharper, faster, and much more credible.</p>
+        <div class="author">Lina K.</div>
+        <div class="role">Marketing Manager</div>
+      </article>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="contact-panel">
+      <div>
+        <span class="section-kicker">Contact</span>
+        <h2 class="section-title">Have a website idea? Let’s build it properly.</h2>
+        <a class="email" href="mailto:ahmed@example.com">ahmed@example.com</a>
+        <div class="socials">
+          <a href="#">GitHub</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Twitter</a>
+        </div>
+      </div>
+      <a href="mailto:ahmed@example.com" class="btn btn-primary">Send a message</a>
+    </div>
+  </section>
+
+  <footer>© 2026 Ahmed. Designed and built for the modern web.</footer>
+</body>
+</html>
