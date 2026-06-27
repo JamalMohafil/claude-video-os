@@ -1,0 +1,42 @@
+{
+  "$schema": "./profile.schema.json",
+  "creator": {
+    "name": "Your Name",
+    "handle": "@yourhandle",
+    "primaryLanguage": "en",
+    "secondaryLanguage": null
+  },
+  "fonts": {
+    "heading": "Inter",
+    "body": "Inter",
+    "mono": "JetBrains Mono",
+    "arabic": "Cairo"
+  },
+  "colors": {
+    "background": "#0A0A0A",
+    "surface": "#161616",
+    "foreground": "#FFFFFF",
+    "muted": "#A1A1AA",
+    "accent": "#6E56CF",
+    "accentForeground": "#FFFFFF"
+  },
+  "style": {
+    "mood": "bold, cinematic, high-contrast",
+    "cornerRadius": 20,
+    "motion": "energetic"
+  },
+  "video": {
+    "defaultPreset": "Portrait-1080p",
+    "logo": null,
+    "safeArea": true
+  },
+  "captions": {
+    "enabled": true,
+    "position": "bottom",
+    "style": "highlight"
+  },
+  "voiceover": {
+    "provider": "elevenlabs",
+    "voiceId": ""
+  }
+}

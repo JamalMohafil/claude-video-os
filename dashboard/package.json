@@ -1,0 +1,26 @@
+{
+  "name": "claude-video-os-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Video OS dashboard — watches your Remotion project: see every video, render with live progress, export.",
+  "scripts": {
+    "dev": "next dev -p 4030",
+    "build": "next build",
+    "start": "next start -p 4030",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "lucide-react": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "latest",
+    "@types/node": "^20",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  }
+}

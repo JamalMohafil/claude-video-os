@@ -1,0 +1,31 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# remotion
+out
+build
+.remotion
+
+# rendered output
+public/renders
+
+# env / secrets
+.env
+.env.local
+.env*.local
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# os / editor
+.DS_Store
+.idea
+*.swp
+
+# whisper models (large, downloaded on demand)
+whisper.cpp
+models

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install)",
+      "Bash(pnpm exec remotion:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm render:*)",
+      "Bash(pnpm still:*)",
+      "Bash(node --version)",
+      "Bash(pnpm --version)",
+      "Bash(which ffmpeg)",
+      "Bash(ffprobe:*)",
+      "Read(./out/**)",
+      "Read(./public/**)"
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Brand Profile",
+  "description": "Brand identity for Claude Video OS. Written by /system-setup; read by every composition via src/brand.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "creator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "handle": { "type": "string" },
+        "primaryLanguage": { "type": "string", "description": "ISO code, e.g. en, ar, fr" },
+        "secondaryLanguage": { "type": ["string", "null"] }
+      },
+      "required": ["name", "handle", "primaryLanguage"]
+    },
+    "fonts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "heading": { "type": "string" },
+        "body": { "type": "string" },
+        "mono": { "type": "string" },
+        "arabic": { "type": "string" }
+      },
+      "required": ["heading", "body", "mono", "arabic"]
+    },
+    "colors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background": { "type": "string" },
+        "surface": { "type": "string" },
+        "foreground": { "type": "string" },
+        "muted": { "type": "string" },
+        "accent": { "type": "string" },
+        "accentForeground": { "type": "string" }
+      },
+      "required": ["background", "foreground", "accent"]
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mood": { "type": "string" },
+        "cornerRadius": { "type": "number" },
+        "motion": { "type": "string", "enum": ["calm", "energetic"] }
+      }
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultPreset": { "type": "string" },
+        "logo": { "type": ["string", "null"] },
+        "safeArea": { "type": "boolean" }
+      }
+    },
+    "captions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "position": { "type": "string", "enum": ["top", "bottom", "center"] },
+        "style": { "type": "string" }
+      }
+    },
+    "voiceover": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": { "type": "string" },
+        "voiceId": { "type": "string" }
+      }
+    }
+  },
+  "required": ["creator", "fonts", "colors"]
+}
