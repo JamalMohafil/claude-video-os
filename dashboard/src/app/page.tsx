@@ -21,7 +21,7 @@ import { PreviewErrorBoundary } from "@/remotion/PreviewErrorBoundary";
 
 type Tab = "videos" | "assets";
 type Aspect = "all" | "portrait" | "landscape" | "square";
-type SortKey = "name" | "duration" | "size";
+type SortKey = "date" | "name" | "duration" | "size";
 
 // Compositions that can be previewed live (instant, scrubbable) — no render
 // needed. Keep in sync with the registry in src/remotion/LivePlayer.tsx.
@@ -44,6 +44,7 @@ type Composition = {
   durationInFrames: number;
   durationInSeconds: number;
   aspect: "portrait" | "landscape" | "square";
+  modifiedAt: number;
 };
 
 type Manifest = { generatedAt: string; count: number; compositions: Composition[] };
@@ -83,7 +84,7 @@ export default function Home() {
   const [tab, setTab] = useState<Tab>("videos");
   const [query, setQuery] = useState("");
   const [aspect, setAspect] = useState<Aspect>("all");
-  const [sort, setSort] = useState<SortKey>("name");
+  const [sort, setSort] = useState<SortKey>("date");
 
   const load = useCallback(async (refresh = false) => {
     if (refresh) setRefreshing(true);
@@ -177,7 +178,8 @@ export default function Home() {
       .filter((c) => (aspect === "all" ? true : c.aspect === aspect))
       .filter((c) => c.id.toLowerCase().includes(query.trim().toLowerCase()));
     const sorted = [...list];
-    if (sort === "name") sorted.sort((a, b) => a.id.localeCompare(b.id));
+    if (sort === "date") sorted.sort((a, b) => b.modifiedAt - a.modifiedAt);
+    else if (sort === "name") sorted.sort((a, b) => a.id.localeCompare(b.id));
     else if (sort === "duration")
       sorted.sort((a, b) => b.durationInSeconds - a.durationInSeconds);
     else if (sort === "size")
@@ -293,6 +295,7 @@ export default function Home() {
                     onChange={(e) => setSort(e.target.value as SortKey)}
                     className="appearance-none rounded-lg border border-[var(--border)] bg-[var(--surface)] py-2 pl-8 pr-7 text-sm outline-none focus:border-[var(--accent)]"
                   >
+                    <option value="date">Newest</option>
                     <option value="name">Name</option>
                     <option value="duration">Duration</option>
                     <option value="size">Resolution</option>

@@ -23,6 +23,74 @@ const ASPECT = (w, h) => {
   return w > h ? "landscape" : "portrait";
 };
 
+// Per-composition "date" = the most recent mtime of the source that defines it,
+// so newly created/edited videos sort to the top. We gather source "units"
+// (each composition folder, each component file, and Root.tsx) with their
+// mtime + text, then match a composition to the units whose text mentions its
+// id (`"<id>"`).
+const collectSourceUnits = () => {
+  const units = [];
+  const addFile = (p) => {
+    try {
+      units.push({ mtime: fs.statSync(p).mtimeMs, text: fs.readFileSync(p, "utf8") });
+    } catch {
+      /* ignore */
+    }
+  };
+  const folderUnit = (dir) => {
+    let mtime = 0;
+    let text = "";
+    const walk = (d) => {
+      let entries;
+      try {
+        entries = fs.readdirSync(d, { withFileTypes: true });
+      } catch {
+        return;
+      }
+      for (const e of entries) {
+        const p = path.join(d, e.name);
+        if (e.isDirectory()) walk(p);
+        else if (/\.(tsx?|jsx?)$/.test(e.name)) {
+          try {
+            mtime = Math.max(mtime, fs.statSync(p).mtimeMs);
+            text += fs.readFileSync(p, "utf8");
+          } catch {
+            /* ignore */
+          }
+        }
+      }
+    };
+    walk(dir);
+    if (mtime) units.push({ mtime, text });
+  };
+
+  const compRoot = path.join(root, "src", "compositions");
+  try {
+    for (const e of fs.readdirSync(compRoot, { withFileTypes: true })) {
+      if (e.isDirectory()) folderUnit(path.join(compRoot, e.name));
+    }
+  } catch {
+    /* ignore */
+  }
+  const componentsDir = path.join(root, "src", "components");
+  try {
+    for (const e of fs.readdirSync(componentsDir, { withFileTypes: true })) {
+      if (e.isFile() && /\.tsx?$/.test(e.name)) addFile(path.join(componentsDir, e.name));
+    }
+  } catch {
+    /* ignore */
+  }
+  addFile(path.join(root, "src", "Root.tsx"));
+  return units;
+};
+
+const modifiedAtFor = (units, id, fallback) => {
+  const needle = `"${id}"`;
+  let best = 0;
+  for (const u of units) if (u.text.includes(needle)) best = Math.max(best, u.mtime);
+  return Math.round(best || fallback);
+};
+
 const main = async () => {
   process.stderr.write("Bundling project to read compositions…\n");
   const serveUrl = await bundle({
@@ -33,6 +101,9 @@ const main = async () => {
   });
 
   const comps = await getCompositions(serveUrl);
+
+  const units = collectSourceUnits();
+  const now = Date.now();
 
   const manifest = {
     generatedAt: new Date().toISOString(),
@@ -45,6 +116,7 @@ const main = async () => {
       durationInFrames: c.durationInFrames,
       durationInSeconds: Number((c.durationInFrames / c.fps).toFixed(2)),
       aspect: ASPECT(c.width, c.height),
+      modifiedAt: modifiedAtFor(units, c.id, now),
     })),
   };
 
