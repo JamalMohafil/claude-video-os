@@ -10,10 +10,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@remotion/google-fonts": "4.0.382",
+    "@remotion/player": "4.0.382",
     "lucide-react": "latest",
     "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "4.0.382"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "latest",

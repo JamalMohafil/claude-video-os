@@ -12,5 +12,6 @@
     "noUnusedLocals": true,
     "resolveJsonModule": true
   },
-  "exclude": ["remotion.config.ts"]
+  "include": ["src"],
+  "exclude": ["remotion.config.ts", "dashboard", "node_modules", "out", "whisper.cpp"]
 }

@@ -12,12 +12,29 @@ import {
   Search,
   ArrowDownUp,
   Images,
+  Eye,
+  X,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import AssetsPanel from "@/components/AssetsPanel";
+import { PreviewErrorBoundary } from "@/remotion/PreviewErrorBoundary";
 
 type Tab = "videos" | "assets";
 type Aspect = "all" | "portrait" | "landscape" | "square";
 type SortKey = "name" | "duration" | "size";
+
+// Compositions that can be previewed live (instant, scrubbable) — no render
+// needed. Keep in sync with the registry in src/remotion/LivePlayer.tsx.
+const LIVE_IDS = new Set(["Intro", "BrandCheck"]);
+
+const LivePlayer = dynamic(() => import("@/remotion/LivePlayer"), {
+  ssr: false,
+  loading: () => (
+    <div className="grid h-[40vh] place-items-center text-[var(--muted)]">
+      <Loader2 className="size-6 animate-spin" />
+    </div>
+  ),
+});
 
 type Composition = {
   id: string;
@@ -62,6 +79,7 @@ export default function Home() {
   const [jobs, setJobs] = useState<Record<string, Job>>({}); // by compositionId
   const [outputs, setOutputs] = useState<Output[]>([]);
   const [playing, setPlaying] = useState<string | null>(null);
+  const [preview, setPreview] = useState<Composition | null>(null);
   const [tab, setTab] = useState<Tab>("videos");
   const [query, setQuery] = useState("");
   const [aspect, setAspect] = useState<Aspect>("all");
@@ -300,18 +318,26 @@ export default function Home() {
                       key={c.id}
                       className="flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] transition hover:border-[var(--accent)]/60"
                     >
-                      <div className="relative aspect-video bg-black">
+                      <button
+                        onClick={() => setPreview(c)}
+                        className="group/thumb relative block w-full overflow-hidden bg-black"
+                        style={{ aspectRatio: "16 / 9" }}
+                        title="Preview"
+                      >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={`/api/thumbnail/${c.id}`}
                           alt={c.id}
                           loading="lazy"
-                          className="size-full object-contain"
+                          className="absolute inset-0 size-full object-contain"
                         />
                         <span className="absolute left-2 top-2 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[var(--muted)]">
                           {c.aspect}
                         </span>
-                      </div>
+                        <span className="absolute inset-0 grid place-items-center bg-black/0 opacity-0 transition group-hover/thumb:bg-black/40 group-hover/thumb:opacity-100">
+                          <Eye className="size-7" />
+                        </span>
+                      </button>
 
                       <div className="flex flex-1 flex-col p-4">
                         <div className="truncate font-semibold">{c.id}</div>
@@ -412,6 +438,131 @@ export default function Home() {
           </>
         )}
       </main>
+
+      {preview &&
+        (() => {
+          const out = `${preview.id}.mp4`;
+          const job = jobs[preview.id];
+          const rendering = !!job && (job.status === "PENDING" || job.status === "PROCESSING");
+          const rendered =
+            !rendering &&
+            (job?.status === "COMPLETED" || outputs.some((o) => o.name === out));
+          return (
+            <div
+              className="fixed inset-0 z-40 grid place-items-center bg-black/85 p-4 sm:p-8"
+              onClick={() => setPreview(null)}
+            >
+              <div
+                className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-3.5">
+                  <div className="min-w-0">
+                    <div className="truncate font-semibold">{preview.id}</div>
+                    <div className="text-xs text-[var(--muted)]">
+                      {preview.width}×{preview.height} · {preview.fps}fps ·{" "}
+                      {preview.durationInSeconds}s · {preview.aspect}
+                      {rendered ? " · rendered" : ""}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setPreview(null)}
+                    className="rounded-md p-1.5 text-[var(--muted)] transition hover:bg-black/40 hover:text-[var(--fg)]"
+                  >
+                    <X className="size-5" />
+                  </button>
+                </div>
+
+                <div className="grid min-h-0 flex-1 place-items-center overflow-auto bg-black p-4">
+                  {(() => {
+                    const still = (
+                      <div className="relative grid place-items-center">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/api/thumbnail/${preview.id}`}
+                          alt={preview.id}
+                          className={`max-h-[64vh] w-auto rounded-lg object-contain ${
+                            rendering ? "opacity-30" : ""
+                          }`}
+                        />
+                        {rendering && (
+                          <div className="absolute inset-0 grid place-items-center">
+                            <div className="flex flex-col items-center gap-2">
+                              <Loader2 className="size-7 animate-spin" />
+                              <div className="text-sm text-[var(--muted)]">
+                                Rendering… {job!.progress}%
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                    const renderedVideo = (
+                      <video
+                        key={out}
+                        src={`/api/file?name=${encodeURIComponent(out)}`}
+                        controls
+                        autoPlay
+                        loop
+                        className="max-h-[64vh] w-auto rounded-lg"
+                      />
+                    );
+                    // Live, instant, scrubbable preview when available — fall
+                    // back to the rendered video or the still if it can't run.
+                    if (LIVE_IDS.has(preview.id) && !rendering) {
+                      return (
+                        <PreviewErrorBoundary fallback={rendered ? renderedVideo : still}>
+                          <LivePlayer id={preview.id} />
+                        </PreviewErrorBoundary>
+                      );
+                    }
+                    return rendered ? renderedVideo : still;
+                  })()}
+                </div>
+
+                <div className="flex items-center gap-2 border-t border-[var(--border)] p-4">
+                  {rendered ? (
+                    <>
+                      <a
+                        href={`/api/file?name=${encodeURIComponent(out)}`}
+                        download
+                        className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium hover:border-[var(--accent)]"
+                      >
+                        <Download className="size-4" /> Download
+                      </a>
+                      <button
+                        onClick={() => render(preview.id)}
+                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold transition hover:opacity-90"
+                      >
+                        <RefreshCw className="size-4" /> Re-render
+                      </button>
+                    </>
+                  ) : rendering ? (
+                    <div className="flex-1">
+                      <div className="mb-1.5 flex items-center justify-between text-xs text-[var(--muted)]">
+                        <span>Rendering…</span>
+                        <span>{job!.progress}%</span>
+                      </div>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-black">
+                        <div
+                          className="h-full rounded-full bg-[var(--accent)] transition-all"
+                          style={{ width: `${Math.max(2, job!.progress)}%` }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => render(preview.id)}
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold transition hover:opacity-90"
+                    >
+                      <Play className="size-4" /> Render &amp; play
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
       {playing && (
         <div

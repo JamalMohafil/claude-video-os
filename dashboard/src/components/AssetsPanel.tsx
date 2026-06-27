@@ -180,21 +180,24 @@ export default function AssetsPanel() {
                 key={a.path}
                 className="group flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]"
               >
-                <div className="relative grid aspect-video place-items-center bg-black">
+                <div
+                  className="relative grid place-items-center overflow-hidden bg-black"
+                  style={{ aspectRatio: "16 / 9" }}
+                >
                   {a.kind === "image" ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={`/api/asset?path=${encodeURIComponent(a.path)}`}
                       alt={a.name}
                       loading="lazy"
-                      className="size-full object-contain"
+                      className="absolute inset-0 size-full object-contain"
                     />
                   ) : a.kind === "video" ? (
                     <video
                       src={`/api/asset?path=${encodeURIComponent(a.path)}`}
                       muted
                       preload="metadata"
-                      className="size-full object-contain"
+                      className="absolute inset-0 size-full object-contain"
                     />
                   ) : (
                     <KindIcon kind={a.kind} />

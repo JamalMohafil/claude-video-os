@@ -21,7 +21,9 @@ to drive it.
   fonts adapt automatically.
 - 🧱 **A component library** — titles, content, code, diagrams, captions, B-roll,
   music — the building blocks Claude assembles.
-- 📝 **Captions** — transcribe your audio and burn in subtitles.
+- 📝 **Local captions & reel understanding** — transcribe speech **offline** with
+  Whisper (auto-installs, no API key) to caption videos and to understand a reel
+  before editing it. Works for Arabic out of the box.
 - 🤖 **Smart by default** — Claude only reaches for paid tools (like AI image
   generation) when it actually helps, and asks you first.
 
@@ -71,20 +73,23 @@ VS Code:
 
 - 🎞️ Every composition in one grid with a live thumbnail — **search, filter by
   aspect ratio, and sort** by name / duration / resolution.
+- 👁 **Live preview** — click a composition to play it instantly in an embedded
+  Remotion player (scrubbable, no render needed), or play the rendered MP4.
 - ▶️ One-click **render with a live progress bar**, then play or download the MP4.
 - 🗂️ An **assets library** for your Remotion `public/` folder: preview, search,
   **upload** (files land in the right subfolder, ready for `staticFile()`), and
   **delete** — all reflected directly on disk.
 
 ```bash
+pnpm install          # at the project root — installs the app + dashboard (one workspace)
 cd dashboard
-pnpm install
-pnpm dev          # → http://localhost:4030
+pnpm dev              # → http://localhost:4030
 ```
 
 Tell Claude to change a video, hit **Refresh** in the dashboard, and the grid
-re-scans the project. Built with Next.js + React; it shells out to your Remotion
-project, so it always reflects the real compositions (no duplicated state).
+re-scans the project. Built with Next.js + React; it reads this Remotion project
+directly (a pnpm workspace shares one React/Remotion copy), so it always reflects
+the real compositions — no duplicated state.
 
 ---
 
@@ -153,8 +158,9 @@ CLAUDE.md           project instructions Claude reads every session
 - [x] **v0.1 — The engine + brand system + Claude layer**
 - [x] **The Video OS dashboard** — watch the project, render with live progress,
   play/export. (`dashboard/`)
+- [x] **Local Whisper STT** — offline transcription + reel understanding
+  (`pnpm transcribe`, auto-installs whisper.cpp).
 - [ ] Captions in the dashboard (transcribe + preview subtitles per video).
-- [ ] Local Whisper captions (offline, no API key).
 - [ ] Voiceover flow (ElevenLabs) wired into compositions.
 - [ ] More brand-aware components and motion presets.
 

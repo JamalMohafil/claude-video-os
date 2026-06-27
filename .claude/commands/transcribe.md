@@ -1,43 +1,38 @@
 ---
-allowed-tools: Read, Bash(curl*, ffmpeg*)
+allowed-tools: Read, Bash(pnpm transcribe*), Bash(ffmpeg*), Bash(which*)
 argument-hint: [media-filename]
-description: Transcribe audio from video/audio files using Deepgram API
+description: Transcribe a video/audio file locally with Whisper (offline, no API key)
 ---
-
-## context
-
-The DEEPGRAM_API_KEY environment variable is already set.
-
-For advanced settings (diarization, language detection, etc.), read @context/deepgram.md
 
 ## task
 
-Transcribe the audio from the media file at $1:
+Transcribe the media at **$1** using the project's **local** speech-to-text
+(Whisper, via `@remotion/install-whisper-cpp`). No API keys, fully offline.
 
-1. **For video files** (mp4, mov, avi, mkv, etc.):
-   - Extract audio to MP3 using ffmpeg: `ffmpeg -i input.mp4 -vn -acodec libmp3lame -q:a 2 output.mp3`
-   - Use the original filename stem (e.g., video.mp4 → video.mp3)
-   - Transcribe the extracted audio file
+## steps
 
-2. **For audio files** (mp3, wav, etc.):
-   - Transcribe directly
-
-3. **Default transcription settings**:
-   - Use `nova-3` model (most accurate)
-   - Enable `smart_format=true` for formatting
-   - Enable `punctuate=true` for punctuation
-   - Enable `filler_words=true` to keep "uh", "um", etc.
-   - Enable `paragraphs=true` for structure
-
-4. **API call**:
+1. **Run the local transcriber**:
    ```bash
-   curl -X POST "https://api.deepgram.com/v1/listen?model=nova-3&smart_format=true&punctuate=true&filler_words=true&paragraphs=true" \
-     -H "Authorization: Token $DEEPGRAM_API_KEY" \
-     -H "Content-Type: audio/mpeg" \
-     --data-binary @audio_file.mp3
+   pnpm transcribe "$1"
    ```
+   This script (`scripts/transcribe.mjs`) handles everything:
+   - Checks `ffmpeg` is installed (tell the user `brew install ffmpeg` if not).
+   - **Installs whisper.cpp + the model only if they're missing** — the first run
+     downloads them (can take a few minutes + a few GB); later runs are instant.
+   - Extracts 16kHz audio, transcribes with word-level timestamps.
 
-5. **Save output**:
-   - Save JSON response to `{original_filename_stem}_transcript.json`
-   - Example: `interview.mp4` → `interview_transcript.json`
-   - Report transcript location and show a snippet of the text
+2. **Model & language**:
+   - Default model is `medium` (multilingual — works for Arabic and others).
+   - The language is taken from the brand profile's `primaryLanguage`, or auto-
+     detected. Override with `WHISPER_LANGUAGE=ar` or a different model:
+     `WHISPER_MODEL=large-v3-turbo pnpm transcribe "$1"` (best quality, slower).
+
+3. **Outputs** (written next to the input file):
+   - `<name>.captions.json` — word-level captions for the `Caption` component.
+   - `<name>.srt` — subtitle file.
+   - `<name>.transcript.txt` — the full spoken text.
+
+4. **Report**: the output paths and a short snippet of the transcript. If the
+   user is captioning a composition, point them at the `.captions.json` and the
+   `Caption` component / the `transcribe-captions` rule in the
+   `remotion-best-practices` skill.

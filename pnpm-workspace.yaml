@@ -1,0 +1,5 @@
+# The dashboard is a workspace package so it shares ONE copy of React/Remotion
+# with this Remotion project — required for the dashboard's live <Player> to
+# render this project's compositions without "multiple versions" crashes.
+packages:
+  - dashboard

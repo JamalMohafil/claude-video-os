@@ -9,19 +9,49 @@ interface CreateCompositionOptions {
   preset: PresetName;
 }
 
+// Metadata attached to every composition so external tools (e.g. the Video OS
+// dashboard's live <Player>) can render it without going through Studio.
+export interface CompositionMeta {
+  id: string;
+  component: React.ComponentType;
+  durationInFrames: number;
+  fps: number;
+  width: number;
+  height: number;
+}
+
+export type RegisteredComposition = React.FC & { meta: CompositionMeta };
+
 export const createComposition = ({
   name,
   component,
   durationInSeconds,
   preset,
-}: CreateCompositionOptions) => {
+}: CreateCompositionOptions): RegisteredComposition => {
   const presetConfig = VIDEO_PRESETS[preset];
-  return () => (
+  const durationInFrames = getDurationInFrames(
+    durationInSeconds,
+    presetConfig.fps,
+  );
+
+  const render: React.FC = () => (
     <Composition
       id={name}
       component={component}
-      durationInFrames={getDurationInFrames(durationInSeconds, presetConfig.fps)}
+      durationInFrames={durationInFrames}
       {...presetConfig}
     />
   );
+
+  const registered = render as RegisteredComposition;
+  registered.meta = {
+    id: name,
+    component,
+    durationInFrames,
+    fps: presetConfig.fps,
+    width: presetConfig.width,
+    height: presetConfig.height,
+  };
+
+  return registered;
 };
