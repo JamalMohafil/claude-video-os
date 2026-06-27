@@ -29,3 +29,22 @@ pnpm-debug.log*
 # whisper models (large, downloaded on demand)
 whisper.cpp
 models
+
+# stray / non-template files
+/ahmad-landing.html
+
+# media added via the dashboard (runtime assets, not template source).
+# the folder structure is kept via .gitkeep; uploaded files are not committed.
+# to version a specific asset anyway: git add -f public/images/your-file.png
+/public/images/*
+/public/videos/*
+/public/audio/*
+/public/files/*
+/public/casts/*
+!/public/**/.gitkeep
+
+# transcription artifacts produced by /transcribe
+*.captions.json
+*.srt
+*.transcript.txt
+*.16k.wav
