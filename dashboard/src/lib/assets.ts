@@ -12,6 +12,8 @@ export type Asset = {
   // staticFile().
   path: string;
   name: string;
+  // Folder the asset lives in, relative to public/ ("" = public root).
+  folder: string;
   kind: AssetKind;
   size: number;
   mtime: number;
@@ -53,10 +55,12 @@ export const listAssets = (): Asset[] => {
         walk(abs);
       } else if (e.isFile()) {
         const rel = path.relative(root, abs).split(path.sep).join("/");
+        const dir = path.dirname(rel);
         const s = fs.statSync(abs);
         result.push({
           path: rel,
           name: e.name,
+          folder: dir === "." ? "" : dir,
           kind: kindForName(e.name),
           size: s.size,
           mtime: s.mtimeMs,
@@ -66,6 +70,41 @@ export const listAssets = (): Asset[] => {
   };
   walk(root);
   return result.sort((a, b) => b.mtime - a.mtime);
+};
+
+// All folders under public/ (relative paths, recursive) — includes empty ones
+// the creator made, so they can move assets into them.
+export const listFolders = (): string[] => {
+  const root = publicDir();
+  const out: string[] = [];
+  const walk = (dir: string, rel: string) => {
+    let entries: fs.Dirent[];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const e of entries) {
+      if (!e.isDirectory() || e.name.startsWith(".")) continue;
+      const relPath = rel ? `${rel}/${e.name}` : e.name;
+      out.push(relPath);
+      walk(path.join(dir, e.name), relPath);
+    }
+  };
+  walk(root, "");
+  return out.sort();
+};
+
+// Validate/normalize a client-supplied folder path for creating or moving into.
+// Returns the absolute dir (may not exist yet) or null if it escapes public/.
+export const resolveFolder = (relPath: string): string | null => {
+  const clean = relPath.replace(/^\/+|\/+$/g, "").trim();
+  if (clean === "") return publicDir();
+  if (clean.includes("..") || clean.startsWith("/")) return null;
+  const abs = path.resolve(publicDir(), clean);
+  const root = path.resolve(publicDir());
+  if (abs !== root && !abs.startsWith(root + path.sep)) return null;
+  return abs;
 };
 
 // Resolve a client-supplied relative path safely inside public/. Returns null
