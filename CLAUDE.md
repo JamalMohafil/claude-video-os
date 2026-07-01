@@ -213,6 +213,24 @@ The brand system handles direction. Set the creator's language in the profile;
 container for RTL languages and prefer logical layout. Fix bidi issues in the
 **content**, not with per-element `dir` hacks.
 
+## Icons — use lucide, never emoji
+
+When a composition needs an icon, use **[lucide-react](https://lucide.dev)**
+(installed) — clean, consistent vector icons. **Never use emoji or system/device
+icons** (📱🚀✅…): they render differently on every device/OS and look
+unprofessional in a rendered video.
+
+```tsx
+import { Rocket, Sparkles, Check } from "lucide-react";
+
+// Size and color them from the brand.
+<Rocket size={72} color={COLORS.accent} strokeWidth={2.5} />
+```
+
+Lucide icons are SVG, so they scale crisply at any resolution and can be animated
+(rotate, scale, stroke) like any element. Prefer them anywhere you'd otherwise
+reach for an emoji or a bespoke icon.
+
 ## Component reference
 
 | Component     | Key props                                                            |

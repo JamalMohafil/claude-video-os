@@ -29,6 +29,7 @@
     "@tailwindcss/postcss": "^4.0.0",
     "@terrastruct/d2": "^0.1.33",
     "asciinema-player": "^3.12.1",
+    "lucide-react": "1.21.0",
     "mermaid": "^11.12.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
