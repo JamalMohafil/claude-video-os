@@ -58,22 +58,32 @@ By default, don't start long-running dev servers on your own — to verify your
 own work, use `pnpm typecheck`, `pnpm lint`, or render a still/short clip with
 `remotion still` / `remotion render`.
 
-**Exception — when the creator explicitly asks to "run the dashboard" (or "run
-it" / "start the app"), start BOTH servers**, each in its own background process:
+**Exception — when the creator asks to "open the dashboard" (or "run the
+dashboard" / "run it" / "start the app"), do ALL of this:**
 
-1. **Remotion Studio** — from the project root:
+1. Start **Remotion Studio** in the **background** (it supports the dashboard's
+   rendering — the creator does not need to look at it):
    ```bash
-   pnpm dev            # → http://localhost:3000  (preview & edit compositions)
+   pnpm dev            # background → http://localhost:3000
    ```
-2. **The Video OS dashboard** — from `dashboard/`:
+2. Start **the Video OS dashboard** in the **background**:
    ```bash
-   cd dashboard && pnpm dev    # → http://localhost:4030  (watch/render/export)
+   cd dashboard && pnpm dev    # background → http://localhost:4030
+   ```
+3. Wait until the dashboard is serving, then **open the DASHBOARD in the browser**:
+   ```bash
+   open http://localhost:4030
    ```
 
-Run them in the background (don't block on them), then report both URLs. They
-work together: Studio is for live editing the compositions; the dashboard watches
-the project to render, export, and manage assets. If only one is asked for, still
-prefer starting both unless the creator says otherwise.
+**Critical:** "open the dashboard" means open **the dashboard at :4030** — NOT
+Remotion Studio. Remotion runs in the background only; never open or focus
+`:3000` instead of the dashboard. Start both servers, but the thing you launch/
+open for the creator is always the dashboard. Run both with a background process
+(don't block the terminal on them), then report both URLs, making clear the
+dashboard (:4030) is the one to use.
+
+The **`/dashboard`** command does exactly this — prefer running it when the
+creator asks to open/run the dashboard.
 
 ## Common commands
 
@@ -90,6 +100,8 @@ pnpm exec remotion render <Id> out/<Id>.mp4   # full render
   Re-runnable any time they want to restyle.
 - `/new-composition <name>` — scaffold a new, on-brand video.
 - `/render <Id>` — render a composition to `out/`.
+- `/dashboard` — start Remotion + the Video OS dashboard, then open the
+  dashboard (:4030). Use this whenever the creator asks to open/run the dashboard.
 - `/transcribe <file>` — transcribe media **locally** (offline Whisper) for
   captions and to understand spoken content.
 - `/generate-image <prompt>` — AI image via Nano Banana. **Opt-in only**: don't
